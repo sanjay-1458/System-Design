@@ -26,7 +26,8 @@ Instead of objects communicating directly with each other, all communication hap
 <img 
     src="./assets/mediator_class_diagram.svg"
     alt="Mediator Class Diagram"
-    width="800"
+    width="100%"
+  style="max-width: 900px; height: auto;"
 />
 
 <h3>Mediator Sequence Diagram</h3>
@@ -34,7 +35,8 @@ Instead of objects communicating directly with each other, all communication hap
 <img 
     src="./assets/mediator_sequence_diagram.svg"
     alt="Mediator Sequence Diagram"
-    width="900"
+    width="100%"
+  style="max-width: 900px; height: auto;"
 />
 
 
