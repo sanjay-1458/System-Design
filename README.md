@@ -36,6 +36,8 @@ This section contains commonly used software design patterns implemented with cl
 | Pattern Name | README | Code |
 |---|---|---|
 | Mediator Design Pattern | [README](./Low%20Level%20Design/System%20Design%20Patterns/Mediator%20Design%20Pattern/README.md) | [Code](./Low%20Level%20Design/System%20Design%20Patterns/Mediator%20Design%20Pattern/mediator.cpp) |
+| Prototype Design Pattern | [README](./Low%20Level%20Design/System%20Design%20Patterns/Prototype%20Design%20Pattern/README.md) | [Code](./Low%20Level%20Design/System%20Design%20Patterns/Prototype%20Design%20Pattern/prototype.cpp) |
+| Visitor Design Pattern | [README](./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/README.md) | [Code](./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/visitor.cpp) |
 
 ---
 
