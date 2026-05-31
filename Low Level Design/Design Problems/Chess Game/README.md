@@ -6,6 +6,13 @@ LLD pipeline:
 
 Gathering Requirements → Use Cases (Who uses whom) → Entities → Relationships → Responsibilities → Classes → Interfaces → Design Patterns (If it is applicable) → Edge Cases → Code.
 
+### Understanding the system
+
+Some problems may contain new system which we are unaware of, for those the first priority is to get the understanding of system and what the system actually does.
+
+
+<img src = "./assets/chess_board.svg" style="width:100px; max-width:700px;"/>
+
 ## Stage 1 : Understanding Functional Requirements
 
 This is the most important stage because every design decision comes from requirements. If requirements are wrong, everything else becomes wrong. It also helps us in discovering how a new system works if we are unaware of it. For example, if someone does not know about "Splitwise", they can get a high-level understanding and design the minimal required features.
@@ -39,6 +46,23 @@ Use cases become:
 ```
 
 
+### Gathering requirements
+
+
+1. It is a standard chess, 8 * 8 size.
+2. It should support Player vs Player.
+3. Castling, Promotion (Expcept becoming King) are supported.
+4. Notify all the spectators.
+5. White should start first, after that alternate turns.
+6. We must detect winner in Checkmate or draw the match.
+7. The game contains normal Pieces with thier specific moves.
+8. We should be able to view history at any stage after the game finishes.
+9. Player can resign, and can undo/redo their moves.
+10. Game can be saved and resumed.
+11. We don't have timer for this system.
+12. Pawn captures diagonally but does not support En Passant.
+13. Check, Checkmate, Stalemate, Draw are supported.
+
 ## Stage 2 : Identify Actors and Use Cases
 
 After understanding functionality, identify who interacts with the system and who is triggering those actions.
@@ -47,9 +71,66 @@ Example:
 
 In a parking lot, a `Driver` enters parking and exits parking, and an `Admin` adds floors, and `Floors` add parking spots.
 
+Before creating classes, we must first understand:
+
+1. Who interacts with the system?
+2. What actions can they perform?
+3. What events happen in the system?
+4. Which actor initiates each action?
+5. Which actor receives information from the system?
+
+Actors:
+
+1. Player
+
+  1. Start game
+  2. Join game
+  3. Make move
+  4. Capture piece
+  5. Castle
+  6. Promote pawn
+  7. Resign
+  8. Undo move
+  9. Redo move
+  10. Save game
+  11. Resume game
+  12. View history
+
+2. Spectator
+
+  1. Watch game
+  2. Receive move updates
+  3. Receive check notifications
+  4. Receive checkmate notifications
+  5. Receive draw notifications
+  6. Receive resignation notifications
+
+3. System
+
+  1. Check detection
+  2. Checkmate detection
+  3. Draw detection
+  4. Stalemate detection
+  5. Turn switching
+  6. Spectator notification
+
+Pieces?
+```
+Actors are external users of the system.
+Pieces are part of the system itself.
+They are entities, not actors.
+```
+
 ## Stage 3 : Identifying Entities
 
+Create entities that have meaningful state, behavior, lifecycle, or business importance.
+
 Now, based on the functional requirements, we need to find core business objects, so we will take the requirements and highlight nouns. Two important things we need are: nouns and verbs. (`nouns`: A noun is a person, place, thing, concept, or object mentioned in the problem statement. `verbs`: Methods or behaviour)
+
+
+Objective: `"Does the system need to remember information about this thing after we find nouns?"`
+
+Like we have email address now are we storing `when it was created`, `who created`, `is it for biusness or child account`? If no, then it is not an entity.
 
 Example:
 
@@ -79,6 +160,27 @@ Verbs:
 3. Member.returnBooks()
 
 
+Based on requirements we can have entities as:
+
+1. ChessGame
+2. Board
+3. Player
+4. Piece
+5. Move
+6. Spectator
+
+Now, why move?
+Because we have requirements as:
+
+1. We should be able to view history after game finishes.
+2. Undo/Redo moves.
+3. Save and Resume.
+
+As history is a collection of Move objects therefore no GameHistory.
+
+Now what about color and game status?
+No, since it is usually represented as enum.
+
 ### Note:
 Not every noun becomes an entity. Some nouns are just attributes.
 
@@ -101,6 +203,9 @@ Attributes:
 ## Stage 4 : Finding Relationships Between Entities
 
 Now we need to think about how entities are connected with each other.
+We must understand how entities depend on each other.
+
+Now we want to know `How are these objects connected?` and `How strong is that connection"`
 
 Example:
 
@@ -129,6 +234,87 @@ Car is a Vehicle
 Truck is a Vehicle
 Bike is a Vehicle
 ```
+
+For the relationship we must understand buisiness requirements:
+
+1. Who owns whom?
+2. Can child exist without parent?
+3. What does the requirement naturally imply?
+
+
+### Relationship 1
+
+`ChessGame ↔ Board`
+
+Every game requires exactly one board.
+A board belongs to a game.
+If game dies: Board dies too.
+
+ChessGame 1 ---- 1 Board (Composition)
+
+
+### Relationship 2
+
+`ChessGame ↔ Player`
+
+Each game requires two players.
+Players can exist independently.
+
+ChessGame 1 ---- 2 Players (Aggregation)
+
+Players are not destroyed when game ends.
+Lifecycle is independent.
+
+
+### Relationship 3
+
+`ChessGame ↔ Move`
+
+Moves belong to a specific game.
+Move #20 from Game A cannot suddenly belong to Game B.
+
+ChessGame 1 ---- N Moves (Composition)
+
+
+### Relationship 4
+
+`ChessGame ↔ Spectator`
+
+Spectators watch games.
+A spectator can continue existing after game ends.
+One spectator may watch multiple games.
+
+Game N ---- M Spectators (Association)
+
+### Relationship 5
+
+`Board ↔ Piece`
+
+If board is destroyed:
+Piece state disappears.
+
+Board 1 ---- N Pieces (Composition)
+
+
+### Relationship 6
+
+`Move ↔ Piece`
+
+Move only references which piece moved.
+Move stores reference/information.
+No ownership.
+
+Move 1 ---- 1 Piece (Association)
+
+
+### Relationship 7
+
+`Player ↔ Move`
+
+One player makes many moves.
+Each move belongs to one player.
+
+Player 1 ---- N Moves (Association)
 
 
 ## Stage 5 : Assigning Responsibilities
