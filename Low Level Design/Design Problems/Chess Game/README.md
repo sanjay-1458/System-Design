@@ -324,12 +324,123 @@ Here we need to assign responsibility to the exact entities, as "who should own 
 Example:
 
 Payment calculation:
-
 Should Vehicle calculate payment? No. PaymentService should.
 
+Objective: Which object is responsible for which piece of work? or Who should be responsible for this behavior?
+
+A class should do things related to its own data.
+
+For this we must know:
+
+1. Who owns the data?
+2. Who has enough information to perform the operation?
+3. Who will be affected if the rule changes?
+
+### Board:
+
+1. Create 8×8 board structure.
+2. Store current piece locations.
+3. Place pieces during game setup.
+4. Move pieces between positions.
+5. Remove captured pieces.
+6. Provide access to board positions.
+7. Provide access to piece locations.
+8. Check whether a square is occupied.
+9. Check whether a square is empty.
+10. Update board state after moves.
+11. Support board restoration during undo.
+12. Support board restoration during resume.
+13. Provide board information for move validation.
+14. Provide board information for check/checkmate calculations.
+
+### Player:
+
+1. Maintain player identity.
+2. Maintain assigned color.
+3. Participate in a match.
+4. Initiate move requests.
+5. Initiate undo requests.
+6. Initiate redo requests.
+7. Initiate resignation requests.
+8. Initiate save requests.
+9. Initiate history viewing requests.
+
+### Piece:
+
+1. Represent a chess piece.
+2. Maintain piece color.
+3. Maintain current position.
+4. Define legal movement behavior.
+5. Validate piece-specific movement rules.
+6. Generate possible moves.
+7. Support capture behavior.
+8. Support piece-specific constraints.
+9. Participate in check calculations.
+10. Participate in checkmate calculations.
+
+### Move:
+
+1. Represent a single move.
+2. Store source position.
+3. Store destination position.
+4. Store moved piece information.
+5. Store captured piece information.
+6. Store move sequence information.
+7. Store promotion information.
+8. Store castling information.
+9. Store player information.
+10. Support move history tracking.
+11. Provide information needed for undo.
+12. Provide information needed for redo.
+13. Provide information needed for save/resume.
+
+
+### Spectator:
+
+1. Observe a chess match.
+2. Receive move notifications.
+3. Receive check notifications.
+4. Receive checkmate notifications.
+5. Receive draw notifications.
+6. Receive resignation notifications.
+7. View current game state.
+8. View match progress.
+
+### ChessGame:
+
+1. Connect two players for a match.
+2. Start and initialize a new game.
+3. Maintain overall game state.
+4. Track current turn.
+5. Ensure white starts first.
+6. Alternate turns between players.
+7. Accept move requests from players.
+8. Coordinate move execution.
+9. Validate turn ownership.
+10. Validate game-level rules.
+11. Coordinate castling execution.
+12. Coordinate pawn promotion.
+13. Detect check.
+14. Detect checkmate.
+15. Detect stalemate.
+16. Detect draw.
+17. Determine winner.
+18. Handle resignation.
+19. Maintain move history.
+20. Support history viewing.
+21. Support undo operation.
+22. Support redo operation.
+23. Save game state.
+24. Resume saved game state.
+25. Maintain spectators list.
+26. Notify spectators about game events.
+27. Mark game as completed.
+28. Manage game lifecycle.
 
 ### Data and behavior should stay together.
 If Ticket contains entry time and exit time, Ticket may calculate duration. But finding available spots should not belong to Ticket.
+
+Take each requirement and check which entity naturally owns this behavior.
 
 ## Stage 6 : Designing Classes and Attributes
 
@@ -352,6 +463,384 @@ Methods:
 1. getVehicleType()
 
 
+Objective: For every responsibility what information must be remembered and what action must be performed.
+
+Before starting we will introduce supporting types:
+
+```java []
+enum Color {
+    WHITE,
+    BLACK
+}
+
+enum GameStatus {
+    IN_PROGRESS,
+    CHECK,
+    CHECKMATE,
+    STALEMATE,
+    DRAW,
+    RESIGNED,
+    FINISHED
+}
+
+class Position {
+    int row;
+    int column;
+}
+```
+
+### Board:
+
+Requirement:
+
+1. 8×8 board
+2. Store current piece locations
+3. Provide board information
+
+Attributes:
+
+```java []
+class Board {
+
+    Piece[][] squares;
+}
+```
+
+Methods:
+
+```java []
+void initializeBoard()
+
+void placePiece(
+    Piece piece,
+    Position position
+)
+
+void movePiece(
+    Position source,
+    Position destination
+)
+
+void removePiece(
+    Position position
+)
+
+Piece getPiece(
+    Position position
+)
+
+boolean isOccupied(
+    Position position
+)
+
+boolean isEmpty(
+    Position position
+)
+
+void restoreBoard(
+    Board boardState
+)
+```
+
+### Player:
+
+Responsibilities:
+
+1. Maintain identity
+2. Maintain color
+3. Participate in match
+
+Attributes:
+
+```java []
+class Player {
+
+    String id;
+
+    String name;
+
+    Color color;
+}
+```
+
+Methods:
+
+```java []
+Move requestMove(
+    Position source,
+    Position destination
+)
+
+void requestUndo()
+
+void requestRedo()
+
+void requestResign()
+
+void requestSave()
+
+void requestHistory()
+```
+
+### Piece:
+
+
+Responsibilities:
+
+1. Maintain color
+2. Maintain position
+3. Capture status
+
+Attributes:
+
+```java []
+class Piece {
+
+    Color color;
+
+    Position position;
+
+    boolean captured;
+}
+```
+
+Methods:
+
+```java []
+boolean canMove(
+    Position destination,
+    Board board
+)
+
+List<Position> getValidMoves(
+    Board board
+)
+
+boolean canCapture(
+    Position destination,
+    Board board
+)
+
+void updatePosition(
+    Position position
+)
+```
+
+### Move:
+
+
+Requirements:
+
+1. History
+2. Undo
+3. Redo
+4. Save
+5. Resume
+
+Attributes:
+
+```java []
+class Move {
+
+    int moveNumber;
+
+    Position source;
+
+    Position destination;
+
+    Piece movedPiece;
+
+    Piece capturedPiece;
+
+    Player player;
+
+    boolean castlingMove;
+
+    boolean promotionMove;
+
+    Piece promotedPiece;
+}
+```
+
+Methods:
+
+```java []
+Position getSource()
+
+Position getDestination()
+
+Piece getMovedPiece()
+
+Piece getCapturedPiece()
+
+boolean isCastlingMove()
+
+boolean isPromotionMove()
+```
+
+### Spectator:
+
+Requirement:
+
+1. Receive notifications
+2. Observe game
+
+Attributes:
+
+```java []
+class Spectator {
+
+    String id;
+
+    String name;
+}
+```
+
+Methods:
+
+```java []
+void update(
+    String message
+)
+
+void viewBoard(
+    Board board
+)
+
+void viewHistory(
+    List<Move> moves
+)
+```
+
+### ChessGame:
+
+Attributes:
+
+```java []
+class ChessGame {
+
+    Board board;
+
+    Player whitePlayer;
+
+    Player blackPlayer;
+
+    Player currentPlayer;
+
+    List<Move> moveHistory;
+
+    Stack<Move> undoStack;
+
+    Stack<Move> redoStack;
+
+    List<Spectator> spectators;
+
+    GameStatus status;
+}
+```
+
+Methods:
+
+1. Game Lifecycle:
+
+```java []
+void startGame()
+
+void endGame()
+```
+
+2. Move Execution:
+
+```java []
+void makeMove(
+    Move move
+)
+
+boolean validateMove(
+    Move move
+)
+```
+
+3. Turn Management:
+
+```java []
+void switchTurn()
+
+Player getCurrentPlayer()
+```
+
+4. Check Rules:
+
+```java []
+boolean isCheck()
+
+boolean isCheckmate()
+
+boolean isStalemate()
+
+boolean isDraw()
+```
+
+5. Game Result:
+
+```java []
+Player getWinner()
+
+void resign(
+    Player player
+)
+```
+
+6. History:
+
+```java []
+List<Move> getHistory()
+
+void replayHistory()
+```
+
+7. Undo/Redo:
+
+```java []
+void undoMove()
+
+void redoMove()
+```
+
+8. Persistence:
+
+```java []
+void saveGame()
+
+void resumeGame()
+```
+
+9. Spectators:
+
+```java []
+void addSpectator(
+    Spectator spectator
+)
+
+void removeSpectator(
+    Spectator spectator
+)
+
+void notifySpectators(
+    String message
+)
+```
+
+10. Special Rules:
+
+```java []
+void performCastling()
+
+void performPromotion(
+    Piece promotedPiece
+)
+```
+
 ## Stage 7 : Finding Abstractions and Interfaces
 
 Now, we must design extensible code. For that, we will think about what might change in the future.
@@ -361,6 +850,34 @@ Example:
 
 If we have a Payment entity, the payment method might change in the future, like someone may use `UPI`, `Wallet`, or `Net Banking`. For this, we must create a `PaymentStrategy`.
 
+Objective: Which classes have common behavior that should be generalized.
+
+### Piece:
+
+We have:
+
+```
+King
+Queen
+Rook
+Bishop
+Knight
+Pawn
+```
+
+All pieces have:
+
+```
+Color
+Position
+Captured State
+Movement Validation
+Possible Moves
+```
+
+### Spectator:
+
+Coomon behaviour: `update(...)`
 
 ## Stage 8 : Applying Design Patterns
 
@@ -368,12 +885,36 @@ We should not force any design pattern unless we are facing a problem.
 
 Here we have multiple payment options; therefore, the `Strategy` pattern comes into action, `Factory` for creating objects and separating object creation from business logic, `Singleton` for creating only one instance in the system like a global manager, `Observer` for notifications, `Builder` when a class has many constructor parameters, etc.
 
+### Pattern 1: Observer
+
+Problem: Notify all spectators.
+
+### Pattern 2: Command
+
+Undo and redo operations map naturally to Command Pattern because each move can encapsulate execution and reversal logic.
+
 ## Stage 9 : Handling Edge Cases
 
 We must be able to think about what can go wrong.
 
 Like in Parking Lot, what if there is `"No spot available"` or an `"Invalid ticket"`?
 
+Stage 9 is about identifying such situations and defining system behavior.
+
+For each requirements we must see: What can go wrong?. And based on that we either:
+```
+Reject?
+Ignore?
+Throw exception?
+Return error?
+```
+
+1. Problem: Checkmate happened.
+2. Then: Player tries another move.
+3. Expected Behavior: Reject move.
+
+1. Problem: White selects black rook.
+2. Expected Behavior: Reject move.
 
 ## Discussion on Concurrency
 
@@ -497,3 +1038,619 @@ A common way to implement this is by using a version number or timestamp. Every 
 The idea is:
 
 "Let everyone work freely and check for conflicts only at the end."
+
+## Database Design
+
+Create tables for things that:
+
+1. Need persistence. Does this information need persistence?
+2. Have independent lifecycle. Can it exist independently?
+3. Need querying later. Will users search/filter/query it?
+
+### Player:
+
+```sql []
+player_id (PK)
+name
+color
+created_at
+```
+
+Players exist independently.
+Can participate in many games.
+
+### ChessGame:
+
+```sql []
+game_id (PK)
+
+white_player_id (FK)
+black_player_id (FK)
+
+current_turn
+
+status
+
+winner_player_id (FK)
+
+created_at
+updated_at
+```
+
+1. Need save/resume.
+2. Need game state.
+3. Need winner.
+
+### Move:
+
+```sql []
+move_id (PK)
+
+game_id (FK)
+
+move_number
+
+player_id (FK)
+
+piece_type
+
+source_row
+source_col
+
+destination_row
+destination_col
+
+captured_piece_type
+
+is_castling
+
+is_promotion
+
+promoted_piece_type
+
+created_at
+```
+
+1. Need History
+2. Need Undo
+3. Need Redo
+4. Need Replay
+5. Need Save/Resume
+
+### Speactator:
+
+```sql []
+spectator_id (PK)
+
+name
+```
+
+### GameSpectator:
+
+```
+game_id (FK)
+
+spectator_id (FK)
+```
+
+Because:
+
+One Game -> Many Spectators
+One Spectator -> Many Games
+
+
+Databases cannot store: `List<Spectator>` inside relational tables cleanly.
+
+Therefore: Bridge Table.
+
+### Indexing
+
+Indexes exist to optimize queries.
+
+So we need to think what queries will the system execute?
+
+```
+Load player
+Load game
+Resume game
+Fetch move history
+Replay game
+Find spectators of a game
+```
+#### Player:
+
+When we search player by Id. It is executed many times.
+Since `player_id` is already primary key, so automatically creates index.
+
+#### ChessGame:
+
+
+We have:
+```
+game_id
+white_player_id
+black_player_id
+current_turn
+status
+winner_player_id
+created_at
+```
+
+1. For searching a game: `game_id` is already a primary key.
+
+2. Show Games For Player
+
+Example:
+```sql []
+SELECT *
+FROM ChessGame
+WHERE white_player_id = '#123'
+```
+
+Useful index: `INDEX(white_player_id)`
+
+3. Resume Active Games
+
+Example:
+```sql []
+SELECT *
+FROM ChessGame
+WHERE status = 'IN_PROGRESS'
+```
+
+Only if active-game lookup is frequent: `INDEX(status)`
+
+4. Recents Games
+
+Example:
+```sql []
+SELECT *
+FROM ChessGame
+ORDER BY created_at DESC
+LIMIT 20
+```
+
+`INDEX(created_at)`
+
+#### Move:
+
+1. Load Move History
+
+Example:
+```sql []
+SELECT *
+FROM Move
+WHERE game_id = '#123'
+ORDER BY move_number
+```
+
+`INDEX(game_id, move_number)`
+
+2. Moves By Player
+
+Example:
+```sql []
+SELECT *
+FROM Move
+Where player_id = '#123'
+```
+
+`INDEX(player_id)`
+
+#### GameSpectator:
+
+1. Find Spectators Watching Game
+
+Example:
+```sql []
+SELECT *
+FROM GameSpectator
+WHERE game_id = '#123'
+```
+
+`INDEX(game_id)`
+
+2. Find Games Watched By Spectator
+
+Example:
+```sql []
+SELECT *
+FROM GameSpectator
+WHERE spectator_id = '#123'
+```
+
+`INDEX(spectator_id)`
+
+Better: 
+
+```sql []
+PRIMARY KEY(
+    game_id,
+    spectator_id
+)
+```
+
+## API Design
+
+`POST /v1/users/createUser` here it treats APIs as actions instead of resources.
+
+We need to check what are the resources in our system.
+
+Resources are:
+
+1. Player
+2. ChessGame
+3. Move
+4. Undo/Redo
+5. Resignation
+6. Spectator
+
+### Player:
+
+Represents a player.
+
+1. Create a new player.
+
+`POST /players`
+
+Request:
+```json []
+{
+  "name": "Player-1",
+  "color": "WHITE"
+}
+```
+
+Response:
+```json []
+{
+  "playerId": "P123",
+  "name": "Player-1",
+  "color": "WHITE"
+}
+```
+
+Status Code:
+```
+201 Created
+400 Bad Request
+```
+
+2. Get Player
+
+`GET /players/{playerId}`
+
+Request:
+`GET /players/#123`
+
+Response:
+```json []
+{
+  "playerId": "P123",
+  "name": "Player-1",
+  "color": "WHITE"
+}
+```
+
+Status Code:
+```
+200 OK
+404 Not Found
+```
+
+3. Get All Games Played By Player
+
+`GET /players/{playerId}/games`
+
+Response:
+```json []
+[
+  {
+    "gameId": "G1",
+    "status": "FINISHED"
+  },
+  {
+    "gameId": "G2",
+    "status": "IN_PROGRESS"
+  }
+]
+```
+
+Status Codes:
+```
+200 OK
+404 Not Found
+```
+
+### ChessGame:
+
+Represents a chess match.
+
+1. Create Game
+
+`POST /games`
+
+Request:
+```json []
+{
+  "whitePlayerId": "P1",
+  "blackPlayerId": "P2"
+}
+```
+
+Response:
+```json []
+{
+  "gameId": "#123",
+  "status": "IN_PROGRESS",
+  "currentTurn": "WHITE"
+}
+```
+
+Status Codes:
+```
+200 OK
+400 Bad Request
+404 Game Not Found
+```
+
+2. Get Game
+
+`GET /games{gameId}`
+
+Response:
+```json []
+{
+  "gameId": "#123",
+  "status": "IN_PROGRESS",
+  "currentTurn": "WHITE",
+  "whitePlayerId": "P1",
+  "blackPlayerId": "P2"
+}
+```
+
+Status Codes:
+```
+200 OK
+404 Game Not Found
+```
+
+3. Get Active Games
+
+`GET /games?status=IN_PROGRESS`
+
+Response:
+```json []
+[
+  {
+    "gameId": "G100",
+    "status": "IN_PROGRESS"
+  },
+  {
+    "gameId": "G101",
+    "status": "IN_PROGRESS"
+  }
+]
+```
+
+Status Codes:
+```
+200 OK
+404 Game Not Found
+```
+
+### Move:
+
+Move belongs to a specific game.
+
+Resource Path:`/games/{gameId}/moves`
+
+1. Make Move
+
+`POST /games/{gameId}/moves`
+
+Request:
+```json []
+{
+  "playerId": "P1",
+  "sourceRow": 6,
+  "sourceCol": 4,
+  "destinationRow": 4,
+  "destinationCol": 4
+}
+```
+
+Response:
+```json []
+{
+  "moveId": "M25",
+  "moveNumber": 25,
+  "status": "SUCCESS"
+}
+```
+
+Status Codes:
+```json []
+201 Created
+400 Invalid Move
+403 Forbidden (Wrong Turn)
+404 Game Not Found
+409 Conflict (Game Finished)
+```
+
+2. Get Move History
+
+`GET /games/{gameId}/moves`
+
+Response:
+```json []
+[
+  {
+    "moveNumber": 1,
+    "piece": "PAWN",
+    "source": "E2",
+    "destination": "E4"
+  },
+  {
+    "moveNumber": 2,
+    "piece": "PAWN",
+    "source": "E7",
+    "destination": "E5"
+  }
+]
+```
+
+Status Codes:
+```
+200 OK
+404 Game Not Found
+```
+
+### Undo / Redo Operations:
+
+`POST /games/{gameId}/undo`
+
+Request:
+```json []
+{
+  "playerId": "P1"
+}
+```
+
+Response:
+```json []
+{
+  "status": "SUCCESS",
+  "undoneMoveNumber": 25
+}
+```
+
+Status Code:
+```
+200 OK
+400 No Move To Undo
+404 Game Not Found
+```
+
+`POST /games/{gameId}/redo`
+
+Request:
+```json []
+{
+  "playerId": "P1"
+}
+```
+
+Response:
+```json []
+{
+  "status": "SUCCESS",
+  "redoneMoveNumber": 25
+}
+```
+
+Status Code:
+```
+200 OK
+400 No Move To Undo
+404 Game Not Found
+```
+
+### Resignation:
+
+`POST /games/{gameId}/resign`
+
+Request:
+```json []
+{
+  "playerId": "P1"
+}
+```
+
+Response:
+```json []
+{
+  "status": "RESIGNED",
+  "winnerPlayerId": "P2"
+}
+```
+
+Status Codes
+```
+200 OK
+404 Game Not Found
+409 Conflict (Game Already Finished)
+```
+
+### Spectators:
+
+Resource Path: `GET /games/{gameId}/spectators`
+
+1. Join Game As Spectator
+
+`POST /games/{gameId}/spectator`
+
+Request:
+```json []
+{
+  "spectatorId": "S1"
+}
+```
+
+Response:
+```json []
+{
+  "gameId": "G100",
+  "spectatorId": "S1",
+  "status": "JOINED"
+}
+```
+
+Status Code:
+```
+201 Created
+404 Game Not Found
+409 Conflict (Already Watching)
+```
+
+2. Leave Game
+
+`DELETE /games/{gameId}/spectators{spectatorId}`
+
+Response:
+```json []
+{
+  "status": "REMOVED"
+}
+```
+
+Status Codes:
+```
+200 OK
+404 Game Not Found
+404 Spectator Not Found
+```
+
+3. Get Spectators
+
+`GET /games/{gameId}/spectators`
+
+Response:
+```json []
+[
+  {
+    "spectatorId": "S1",
+    "name": "Bob"
+  },
+  {
+    "spectatorId": "S2",
+    "name": "John"
+  }
+]
+```
+
+Status Codes:
+```
+200 OK
+404 Game Not Found
+```
