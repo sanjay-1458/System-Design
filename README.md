@@ -48,6 +48,8 @@ This section contains real-world object-oriented design problems with UML diagra
 | Problem Name | README | Code |
 |---|---|---|
 | Parking Lot | [README](./Low%20Level%20Design/Design%20Problems/Parking%20Lot/README.md) | [Implementation](./Low%20Level%20Design/Design%20Problems/Parking%20Lot/) |
+| Snakes and Ladders | [README](./Low%20Level%20Design/Design%20Problems/Snakes%20and%20Ladders/README.md) | [Implementation](./Low%20Level%20Design/Design%20Problems/Snakes%20and%20Ladders/) |
+| Chess Game | [README](./Low%20Level%20Design/Design%20Problems/Chess%20Game/README.md) | [Implementation](./Low%20Level%20Design/Design%20Problems/Chess%20Game/) |
 
 ---
 
