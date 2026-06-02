@@ -82,37 +82,36 @@ Before creating classes, we must first understand:
 Actors:
 
 1. Player
-
-  1. Start game
-  2. Join game
-  3. Make move
-  4. Capture piece
-  5. Castle
-  6. Promote pawn
-  7. Resign
-  8. Undo move
-  9. Redo move
-  10. Save game
-  11. Resume game
-  12. View history
+    1. Start game
+    2. Join game
+    3. Make move
+    4. Capture piece
+    5. Castle
+    6. Promote pawn
+    7. Resign
+    8. Undo move
+    9. Redo move
+    10. Save game
+    11. Resume game
+    12. View history
 
 2. Spectator
 
-  1. Watch game
-  2. Receive move updates
-  3. Receive check notifications
-  4. Receive checkmate notifications
-  5. Receive draw notifications
-  6. Receive resignation notifications
+    1. Watch game
+    2. Receive move updates
+    3. Receive check notifications
+    4. Receive checkmate notifications
+    5. Receive draw notifications
+    6. Receive resignation notifications
 
 3. System
 
-  1. Check detection
-  2. Checkmate detection
-  3. Draw detection
-  4. Stalemate detection
-  5. Turn switching
-  6. Spectator notification
+    1. Check detection
+    2. Checkmate detection
+    3. Draw detection
+    4. Stalemate detection
+    5. Turn switching
+    6. Spectator notification
 
 Pieces?
 ```
@@ -648,17 +647,17 @@ class Move {
 
     Position destination;
 
-    Piece movedPiece;
+    PieceType movedPieceType;
 
-    Piece capturedPiece;
+    PieceType capturedPieceType;
 
-    Player player;
+    PieceType promotedPieceType;
+
+    String playerId;
 
     boolean castlingMove;
 
     boolean promotionMove;
-
-    Piece promotedPiece;
 }
 ```
 
@@ -841,6 +840,16 @@ void performPromotion(
 )
 ```
 
+#### Note:
+Since ChessGame now has many implementation we can make it as orchestrator and we move anything related to methods outside:
+```
+Validation
+Rule Evaluation
+Persistence
+Notifications
+History Management
+```
+
 ## Stage 7 : Finding Abstractions and Interfaces
 
 Now, we must design extensible code. For that, we will think about what might change in the future.
@@ -892,6 +901,15 @@ Problem: Notify all spectators.
 ### Pattern 2: Command
 
 Undo and redo operations map naturally to Command Pattern because each move can encapsulate execution and reversal logic.
+
+### Pattern 3: Builder
+
+Here move and other entitities whose constructor conatins many attributes can be done using builder.
+
+
+#### UML Diagram
+
+<img src="./assets/chess_game_uml.png" style="width:100px; max-width:900px" />
 
 ## Stage 9 : Handling Edge Cases
 
@@ -1063,16 +1081,11 @@ Can participate in many games.
 
 ```sql []
 game_id (PK)
-
 white_player_id (FK)
 black_player_id (FK)
-
 current_turn
-
 status
-
 winner_player_id (FK)
-
 created_at
 updated_at
 ```
@@ -1085,29 +1098,18 @@ updated_at
 
 ```sql []
 move_id (PK)
-
 game_id (FK)
-
 move_number
-
 player_id (FK)
-
 piece_type
-
 source_row
 source_col
-
 destination_row
 destination_col
-
 captured_piece_type
-
 is_castling
-
 is_promotion
-
 promoted_piece_type
-
 created_at
 ```
 
@@ -1121,7 +1123,6 @@ created_at
 
 ```sql []
 spectator_id (PK)
-
 name
 ```
 
@@ -1129,7 +1130,6 @@ name
 
 ```
 game_id (FK)
-
 spectator_id (FK)
 ```
 
