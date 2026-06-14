@@ -51,9 +51,9 @@ We need to find which `Actor`, perform which `Action` to achieve which `Goal`.
 ### Expense Management
 
 1. User creates an expense.
-2. User updates / deletes and expense.
+2. User updates / deletes an expense.
 3. User chooses split type: equal, percentage, exact.
-4. User add expense in a group or between two users.
+4. User add an expense in a group or between two users.
 
 ### Balance Management
 
@@ -77,6 +77,102 @@ We need to find which `Actor`, perform which `Action` to achieve which `Goal`.
 
 ## Stage: 4 - Entities
 
-Now we find entities by finding nouns from use cases and filterting those having state and lifecycle along with business requirement.
+Now we find entities by finding nouns from use cases and filterting those having state and lifecycle along with business requirement. (Independent identity + lifecycle)
 
 `Nouns`: thing, object(physical or logical item like group), person, or concept(may not exist physically but it is important to the business requirement).
+
+Nouns:
+
+1. Account
+2. Group
+3. Member
+4. Expense
+5. Balance
+6. Settlement
+7. Transaction History
+8. Notification
+9. Debt
+10. Transaction
+11. User
+
+Account is merged with `User`, Balance is derived from `Expense` and `Settlement`, Transaction History is a list of `Expense` and `Settlement`, Debt is derived from `Balance` and Transaction can be formed from `Expense` and `Settlement`, Member is just a `User` in a `Group`.
+
+Now to check our system we must check:
+1. What data must survive? -> Entities
+
+Or: `To identify the business objects that must exist for the system to work.`
+
+
+2. What behavior must happen? -> Services
+3. What data can be calculated? -> Derived models
+
+
+For `Notification` we are not storing data like, here we are not storing `sent`, `read`. Therefore it is not an entity but a behaviour later we can add it as service.
+
+### Entities
+
+1. User
+2. Group
+3. Expense
+4. ExpenseSplit
+5. Settlement
+
+
+## Stgae: 5 - Relationships
+
+Here we find:
+
+1. Which entities are connected.
+2. What is the cardinality (One to One, One to Many, Many to Many).
+3. Type of relationship (Association, Aggregation, Composition).
+
+### Relationships
+1. User - Group, Many to Many, Aggregation
+2. Group - Expense, One to Many, Composition
+3. User - Expense, One to Many, Association
+4. Expense - ExpenseSplit, One to Many, Composition
+5. User - ExpenseSplit, One to Many, Association
+6. User - Settlement. One to Many, Association
+
+## Stage: 6 - Responsibilities
+
+We check each use case and see who owns the data and based on that we add create responsibility and allocate it the object who owns it we are not createing it from entities.
+
+Use Case: `User adds member to group`, the meber is known by the Group thus:
+
+Group Responsibility:
+- Maintain members
+- Add member
+- Remove member
+
+
+### Responsibilities
+
+User Responsibilities:
+- Maintain user information.
+- Maintain joined groups.
+
+Group Responsibilities:
+- Maintain member list.
+- Add member.
+- Remove member.
+- Validate join/leave operations.
+- Maintain group expenses.
+
+Expense Responsibilities:
+- Maintain expense details.
+- Maintain payer information.
+- Maintain participants.
+- Maintain split information.
+- Update/Delete expense.
+
+ExpenseSplit Responsibilities:
+- Maintain participant share.
+- Maintain share amount.
+
+Settlement Responsibilities:
+- Record settlement details.
+- Record payer.
+- Record receiver.
+- Record settled amount.
+- Support partial settlement.
