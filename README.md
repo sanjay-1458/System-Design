@@ -33,23 +33,61 @@ This section includes design patterns, UML diagrams, lifecycle modeling, API des
 
 This section contains commonly used software design patterns implemented with clean architecture and practical examples.
 
-| Pattern Name | README | Code |
-|---|---|---|
-| Mediator Design Pattern | [README](./Low%20Level%20Design/System%20Design%20Patterns/Mediator%20Design%20Pattern/README.md) | [Code](./Low%20Level%20Design/System%20Design%20Patterns/Mediator%20Design%20Pattern/mediator.cpp) |
-| Prototype Design Pattern | [README](./Low%20Level%20Design/System%20Design%20Patterns/Prototype%20Design%20Pattern/README.md) | [Code](./Low%20Level%20Design/System%20Design%20Patterns/Prototype%20Design%20Pattern/prototype.cpp) |
-| Visitor Design Pattern | [README](./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/README.md) | [Code](./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/visitor.cpp) |
-
+<table>
+  <tr>
+    <th>Pattern Name</th>
+    <th>README</th>
+    <th>Code</th>
+  </tr>
+  <tr>
+    <td>Mediator Design Pattern</td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Mediator%20Design%20Pattern/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Mediator%20Design%20Pattern/mediator.cpp">Code</a></td>
+  </tr>
+  <tr>
+    <td>Prototype Design Pattern</td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Prototype%20Design%20Pattern/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Prototype%20Design%20Pattern/prototype.cpp">Code</a></td>
+  </tr>
+  <tr>
+    <td>Visitor Design Pattern</td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/visitor.cpp">Code</a></td>
+  </tr>
+</table>
 ---
 
 ## Design Problems
 
 This section contains real-world object-oriented design problems with UML diagrams, API design, lifecycle flows, and architecture.
 
-| Problem Name | README | Code |
-|---|---|---|
-| Parking Lot | [README](./Low%20Level%20Design/Design%20Problems/Parking%20Lot/README.md) | [Implementation](./Low%20Level%20Design/Design%20Problems/Parking%20Lot/) |
-| Snakes and Ladders | [README](./Low%20Level%20Design/Design%20Problems/Snakes%20and%20Ladders/README.md) | [Implementation](./Low%20Level%20Design/Design%20Problems/Snakes%20and%20Ladders/) |
-| Chess Game | [README](./Low%20Level%20Design/Design%20Problems/Chess%20Game/README.md) | [Implementation](./Low%20Level%20Design/Design%20Problems/Chess%20Game/) |
+<table>
+  <tr>
+    <th>Problem Name</th>
+    <th>README</th>
+    <th>Code</th>
+  </tr>
+  <tr>
+    <td>Parking Lot</td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Parking%20Lot/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Parking%20Lot/parking_lot.cpp">Implementation</a></td>
+  </tr>
+  <tr>
+    <td>Snakes and Ladders</td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Snakes%20and%20Ladders/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Snakes%20and%20Ladders/main.cpp">Implementation</a></td>
+  </tr>
+  <tr>
+    <td>Chess Game</td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Chess%20Game/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Chess%20Game/main.cpp">Implementation</a></td>
+  </tr>
+  <tr>
+    <td>Splitwise</td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Splitwise/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Splitwise/main.cpp">Implementation</a></td>
+  </tr>
+</table>
 
 ---
 

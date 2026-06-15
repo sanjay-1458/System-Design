@@ -1,7 +1,7 @@
 # Splitwise
 
 The LLD pipeline for this problem will be as:
-`Understand the system → Gathering Requirements → Use Cases (Who uses whom) → Entities → Relationships → Responsibilities → Classes & Interfaces → Design Patterns (If it is applicable) → Edge Cases → Code.`
+`Understand the system → Gathering Requirements → Use Cases (Who uses whom) → Entities → Relationships → Responsibilities → Classes & Interfaces → Design Patterns (If it is applicable) → Code.`
 
 
 ## Stage: 1 - Understand the system
@@ -103,8 +103,6 @@ Now to check our system we must check:
 Or: `To identify the business objects that must exist for the system to work.`
 
 
-2. What behavior must happen? -> Services
-3. What data can be calculated? -> Derived models
 
 
 For `Notification` we are not storing data like, here we are not storing `sent`, `read`. Therefore it is not an entity but a behaviour later we can add it as service.
@@ -176,3 +174,270 @@ Settlement Responsibilities:
 - Record receiver.
 - Record settled amount.
 - Support partial settlement.
+
+
+## Stage: 7 - Classes & Interfaces
+
+After having Entities and Responsibilities we can have:
+
+### Entity Classes:
+1. User
+2. Group
+3. Expense
+4. ExpenseSplit
+5. Settlement
+
+
+Now, we can observe some responsibilities which does not belong to any entity like notification and debt simplification. So, this will exist as service hence: 
+
+### Service Classes:
+1. NotificationService
+2. DebtSimplificationService
+
+As here we don't store data and they only exist as behaviour.
+
+1. What behavior must happen? -> Services
+2. What data can be calculated? -> Derived models
+
+Now, from our requirements we will only have one interface as we have multiple split types which can extend further.
+
+### Interface:
+1. SplitStrategy
+
+### Implementations:
+1. EqualSplitStrategy
+2. ExactSplitStrategy
+3. PercentageSplitStrategy
+
+### User:
+```json []
+userId
+name
+email
+List of Groups
+
+joinGroup(Group)
+leaveGroup(Group)
+```
+
+### Group:
+
+```json []
+groupId
+name
+List of Users (members)
+List of Expense
+
+addMember(User)
+removeMember(User)
+canLeave(User)
+addExpense(Expense)
+```
+
+### Expense:
+
+```json []
+expenseId
+amount
+description
+paidBy
+List of Users (participants)
+List of ExpenseSplit
+
+updateExpense()
+deleteExpense()
+calculateSplit()
+```
+
+### ExpenseSplit:
+
+```json []
+user
+shareAmount
+```
+
+### Settlement:
+```json []
+settlementId
+payer
+receiver
+amount
+timestamp
+
+recordSettlement()
+```
+
+### NotificationService:
+
+```json []
+notifyExpenseCreated(Expense)
+notifyExpenseUpdated(Expense)
+notifyExpenseDeleted(Expense)
+notifySettlement(Settlement)
+```
+
+### DebtSimplificationService:
+
+```json []
+calculateNetBalances(Group)
+simplifyDebts(Group)
+```
+
+### SplitStrategy:
+
+```json []
+calculateSplit()
+```
+
+
+## Stage: 8 - Design Patterns
+
+Since we have multuiple interchangeable split algorithm and using conditional is not effective as later it can have multiple algorithms. Here we will use `Strategy` pattern as we can later extend to more algorithms.
+
+When expense are created or updated a notification is sent to multiple receivers here notification type can later become `email`, `sms`, etc. So, if it is inside Expense then whenever we update or extend Notification the Expense is also affected thus we willl use and `Observer` pattern.
+
+
+## API Design
+
+Now we will design resource oriented REST APIs.
+
+After that we will find resources.
+
+Primary resources -> Entities.
+```json []
+User
+Group
+Expense
+Settlement
+```
+
+Now, what derived view we need.
+
+1. View Balance
+2. View Transaction History
+3. Debt Simplification
+4. Notifications
+
+Resources:
+
+```json []
+/users
+/groups
+/expenses
+/settlements
+/balances
+/transactions
+/notifications
+```
+
+For every use-case we have APIs:
+
+1. Create User: `POST /users`
+```json []
+{
+  "name": "User-1",
+  "email": "user1@gmail.com"
+}
+```
+2. Get User: `GET /users/{userId}`
+3. Get User Groups: `GET /users/{userId}/groups`
+4. Create Group: `POST /groups`
+```json []
+{
+  "name": "Goa Trip"
+}
+```
+5. Get Group: `GET /groups/{groupId}`
+6. Add Member: `POST /groups/{groupId}/members`
+```json []
+{
+  "userId": "U1"
+}
+```
+7. Remove Member: `DELETE /groups/{groupId}/members/{userId}`
+8. Leave Group: `DELETE /groups/{groupId}/members/{userId}`
+9. Get Members: `GET /groups/{groupId}/members`
+10. Create Expense: `POST /expenses`
+```json []
+{
+  "groupId": "G1",
+  "paidBy": "U1",
+  "amount": 3000,
+  "description": "Hotel",
+  "splitType": "EQUAL"
+}
+```
+11. Get Expense: `GET /expenses/{expenseId}`
+12. Update Expense: `PUT /expenses/{expenseId}`
+13. Delete Expense: `DELETE /expenses/{expenseId}`
+14. Get Group Expenses: `GET /groups/{groupId}/expenses`
+15. Create Settlement: `POST /settlements`
+```json []
+{
+  "payerId": "U2",
+  "receiverId": "U1",
+  "amount": 1000
+}
+```
+16. Get Settlement: `GET /settlements/{settlementId}`
+17. Group Settlement History: `GET /groups/{groupId}/settlements`
+18. Get User Balances: `GET /users/{userId}/balances`
+19. Get Group Balances: `GET /groups/{groupId}/balances`
+20. User Transaction History: `GET /users/{userId}/transactions`
+21. Group Transaction History: `GET /groups/{groupId}/transactions`
+23. Simplify Debts: `POST /groups/{groupId}/simplify`
+24. Get Simplified Settlement Plan: `GET /groups/{groupId}/simplify`
+25. Get Notifications: `GET /users/{userId}/notifications`
+
+## Database Design
+
+The entities will almost become tables:
+```json []
+User
+Group
+Expense
+ExpenseSplit
+Settlement
+```
+
+Databases store state so we don't store services.
+
+If system restarts, what must survive?
+
+For Splitwise:
+```json []
+Users
+Groups
+Group Memberships
+Expenses
+Expense Splits
+Settlements
+```
+
+Group member table exist because `User` to `Group` is Many-to-Many relationship thus we need a junction table.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+This is where balance calculation and DSA logic live.
+
+Batch 5 (Coordinator)
+Splitwise.h
+Splitwise.cpp
+Batch 6 (Driver)
+main.cpp
