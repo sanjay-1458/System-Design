@@ -420,24 +420,3 @@ Group member table exist because `User` to `Group` is Many-to-Many relationship 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-This is where balance calculation and DSA logic live.
-
-Batch 5 (Coordinator)
-Splitwise.h
-Splitwise.cpp
-Batch 6 (Driver)
-main.cpp
