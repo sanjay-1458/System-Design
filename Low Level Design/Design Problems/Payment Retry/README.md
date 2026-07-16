@@ -564,3 +564,86 @@ Failed
 
 Every workflow updates status through this module rather than modifying it arbitrarily.
 
+## Entities
+
+The goal of this stage is to identify what data the system needs to remember.
+
+If the application restarts and you would want that information back, it is probably an entity.
+
+
+1. Payment
+
+The main business object.
+
+Stores everything related to one payment.
+
+Typical fields
+```
+paymentId
+amount
+currency
+status
+providerId
+retryCount
+nextRetryTime
+createdAt
+updatedAt
+idempotencyKey
+```
+2. PaymentAttempt
+
+Represents one attempt to process a payment.
+
+A payment can have many attempts.
+
+Typical fields
+```
+attemptNumber
+paymentId
+providerId
+status
+failureReason
+responseCode
+providerTransactionId
+latency
+attemptTime
+```
+This is your retry history.
+
+3. PaymentProvider
+
+Represents a payment gateway.
+
+Typical fields
+```
+providerId
+providerName
+isAvailable
+```
+Concrete providers (Stripe, Razorpay, etc.) will later implement the provider interface.
+
+4. RetryPolicy
+Represents configurable retry settings.
+
+Typical fields
+```
+maxRetries
+baseDelay
+maxDelay
+backoffMultiplier
+jitterEnabled
+jitterRange 
+```
+Keeping these together avoids scattering configuration throughout the code.
+
+5. ScheduledRetry
+
+Represents a payment waiting to be retried.
+
+Typical fields
+```
+paymentId
+scheduledTime
+attemptNumber
+```
+The scheduler works with these tasks instead of scanning every payment repeatedly.
