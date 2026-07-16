@@ -54,7 +54,13 @@ This section contains commonly used software design patterns implemented with cl
     <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/README.md">README</a></td>
     <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Visitor%20Design%20Pattern/visitor.cpp">Code</a></td>
   </tr>
+  <tr>
+    <td>State Design Pattern</td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/State%20Design%20Pattern/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/State%20Design%20Pattern/state.cpp">Code</a></td>
+  </tr>
 </table>
+
 ---
 
 ## Design Problems
@@ -66,6 +72,11 @@ This section contains real-world object-oriented design problems with UML diagra
     <th>Problem Name</th>
     <th>README</th>
     <th>Code</th>
+  </tr>
+  <tr>
+    <td>Payment Retry</td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Payment%20Retry/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/Design%20Problems/Payment%20Retry/main.cpp">Implementation</a></td>
   </tr>
   <tr>
     <td>Parking Lot</td>

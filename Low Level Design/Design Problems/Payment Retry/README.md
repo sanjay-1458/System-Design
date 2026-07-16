@@ -52,7 +52,7 @@ These are the features the system must provide.
 
 
 
-1. Create Payment
+#### Create Payment
 
 
 
@@ -60,7 +60,7 @@ System receives a payment request. It creates a payment with a unique ID. Initia
 
 
 
-2. Process Payment
+#### Process Payment
 
 
 
@@ -68,7 +68,7 @@ The system sends the payment to the selected provider. Provider returns success 
 
 
 
-3. Support Multiple Providers
+##### Support Multiple Providers
 
 
 
@@ -88,7 +88,7 @@ Tomorrow another provider can be added without changing existing code.
 
 
 
-4. Retry Temporary Failures
+#### Retry Temporary Failures
 
 
 
@@ -100,37 +100,36 @@ Examples of retryable failures
 
 
 
-```
 
-timeout
+1. timeout
 
-network failure
+2. network failure
 
-server unavailable
+3. server unavailable
 
-gateway busy
+4. gateway busy
 
-connection reset
+5. connection reset
 
-```
+
 
 Examples of non-retryable failures
 
-```
 
-invalid card
 
-card expired
+1. invalid card
 
-insufficient balance
+2. card expired
 
-```
+3. insufficient balance
+
+
 
 Retrying these wastes resources.
 
 
 
-5. Maximum Retry Count
+#### Maximum Retry Count
 
 
 
@@ -140,7 +139,7 @@ Retry only three times. After that, mark payment as permanently failed.
 
 
 
-6. Exponential Backoff
+#### Exponential Backoff
 
 
 
@@ -170,7 +169,7 @@ This prevents overloading the provider.
 
 
 
-7. Random Jitter
+#### Random Jitter
 
 
 
@@ -220,7 +219,7 @@ It avoids a retry storm.
 
 
 
-8. Maintain Retry History
+#### Maintain Retry History
 
 
 
@@ -230,9 +229,8 @@ Every attempt should be stored.
 
 Example
 
+Attempt 1:
 ```
-
-Attempt 1
 
 Time
 
@@ -250,7 +248,7 @@ Result
 
 
 
-9. Final Payment Status
+#### Final Payment Status
 
 
 
@@ -262,7 +260,7 @@ No payment should remain halfway forever.
 
 
 
-10. Payment Idempotency
+#### Payment Idempotency
 
 
 
@@ -280,7 +278,7 @@ Do not create another payment.
 
 
 
-11. Provider Response Recording
+#### Provider Response Recording
 
 
 
@@ -302,7 +300,7 @@ latency
 
 
 
-12. Retry Scheduling
+#### Retry Scheduling
 
 
 
@@ -310,7 +308,7 @@ After failure, payment should be scheduled for future retry. It should not block
 
 
 
-13. Query Payment
+#### Query Payment
 
 
 
@@ -340,7 +338,7 @@ These describe how the system should behave rather than what it does.
 
 
 
-1. Reliability
+#### Reliability
 
 
 
@@ -352,7 +350,7 @@ If the application crashes after scheduling a retry, a production system would r
 
 
 
-2. Scalability
+#### Scalability
 
 
 
@@ -362,7 +360,7 @@ Retry mechanism should work independently for every payment.
 
 
 
-3. Extensibility
+#### Extensibility
 
 
 
@@ -370,7 +368,7 @@ Adding a new provider should require adding a new implementation rather than mod
 
 
 
-4. Maintainability
+#### Maintainability
 
 
 
@@ -378,7 +376,7 @@ Retry logic, provider logic, history, scheduling, and storage should each have a
 
 
 
-5. Thread Safety
+#### Thread Safety
 
 
 
@@ -386,7 +384,7 @@ If multiple worker threads process payments, only one worker should retry a part
 
 
 
-6. Performance
+#### Performance
 
 
 
@@ -394,7 +392,7 @@ The system should avoid unnecessary retries, avoid blocking worker threads, and 
 
 
 
-7. Observability
+#### Observability
 
 
 
@@ -402,14 +400,17 @@ Every retry attempt, delay, provider response, and final outcome should be logge
 
 
 
-8. Configurability
+#### Configurability
 
 
 
 Values such as maximum retry count, base delay, maximum delay, and jitter range should come from configuration rather than being hardcoded.
 
+## UML-Diagram
 
-
+<p align="center">
+    <img src="assets/uml.png" alt="UML Diagram" style="max-width: 100%; height: auto;">
+</p>
 
 
 ## Use Case
@@ -420,7 +421,7 @@ The purpose of this stage is to divide the system into logical business feature 
 
 
 
-1. Payment Management
+### Payment Management
 
 
 
@@ -446,7 +447,7 @@ Everything related to the payment itself belongs here.
 
 
 
-2. Provider Management
+### Provider Management
 
 
 
@@ -470,7 +471,7 @@ Tomorrow a new provider can be added without affecting retry logic.
 
 
 
-3. Retry Management
+### Retry Management
 
 
 
@@ -496,7 +497,7 @@ It only decides when and whether another attempt should occur.
 
 
 
-4. Retry Scheduling
+### Retry Scheduling
 
 
 
@@ -520,7 +521,7 @@ It does not know anything about payment providers.
 
 
 
-5. History Management
+### History Management
 
 
 
@@ -542,7 +543,7 @@ Customer support and debugging depend on this information.
 
 
 
-6. Status Management
+### Status Management
 
 
 
@@ -571,7 +572,7 @@ The goal of this stage is to identify what data the system needs to remember.
 If the application restarts and you would want that information back, it is probably an entity.
 
 
-1. Payment
+### Payment
 
 The main business object.
 
@@ -590,7 +591,7 @@ createdAt
 updatedAt
 idempotencyKey
 ```
-2. PaymentAttempt
+### PaymentAttempt
 
 Represents one attempt to process a payment.
 
@@ -610,7 +611,7 @@ attemptTime
 ```
 This is your retry history.
 
-3. PaymentProvider
+### PaymentProvider
 
 Represents a payment gateway.
 
@@ -622,7 +623,7 @@ isAvailable
 ```
 Concrete providers (Stripe, Razorpay, etc.) will later implement the provider interface.
 
-4. RetryPolicy
+### RetryPolicy
 Represents configurable retry settings.
 
 Typical fields
@@ -636,7 +637,7 @@ jitterRange
 ```
 Keeping these together avoids scattering configuration throughout the code.
 
-5. ScheduledRetry
+### ScheduledRetry
 
 Represents a payment waiting to be retried.
 
@@ -647,3 +648,430 @@ scheduledTime
 attemptNumber
 ```
 The scheduler works with these tasks instead of scanning every payment repeatedly.
+
+## Relationships
+
+Once the entities are identified, the next step is to determine how they are connected. A relationship tells us which object knows about another object and how many of them can exist.
+
+### Payment → PaymentAttempt
+
+Relationship: Composition
+Cardinality: 1 to N
+
+### Payment → PaymentProvider
+
+Relationship: Association
+Cardinality: N to 1
+
+### RetryTask → Payment
+
+Relationship: Association
+Cardinality: 1 to 1
+
+### RetryPolicy → Payment
+
+Relationship: Association
+Cardinality: 1 to N
+
+
+## Responsibilities
+
+### PaymentService
+
+Owns the payment lifecycle.
+
+Responsibilities
+```
+Create Payment
+Get Payment
+Update Payment Status
+Increase Retry Count
+Save Payment
+Validate Payment Request
+```
+
+### ProviderService
+
+Owns communication with payment gateways.
+
+Responsibilities
+```
+Select Provider
+Call Provider
+Receive Provider Response
+Convert Provider Response into Common Result
+```
+### RetryManager
+
+Owns retry decisions.
+
+Responsibilities
+```
+Check Retry Eligibility
+Check Maximum Retry Limit
+Identify Retryable Failure
+Calculate Next Retry Delay
+Apply Exponential Backoff
+Apply Jitter
+Create Retry Task
+```
+Everything related to retry rules belongs here.
+
+### RetryScheduler
+
+Owns time.
+
+Responsibilities
+```
+Schedule Retry
+Execute Retry
+Remove Completed Retry
+Fetch Due Retry Tasks
+```
+
+
+### HistoryService
+
+Owns retry history.
+
+Responsibilities
+```
+Create Attempt Record
+Store Failure
+Store Success
+Get Payment History
+```
+HistoryService only manages PaymentAttempt.
+
+### PaymentProcessor
+
+This is the orchestrator. It coordinates all services.
+
+Responsibilities
+```
+Start Payment Processing
+Call Provider
+Handle Success
+Handle Failure
+Trigger RetryManager
+Record History
+Update Final Status
+```
+
+### Payment
+
+Responsibilities
+```
+Store Payment Information
+Store Current Status
+Store Retry Count
+Store Provider Reference
+```
+No business logic.
+
+### PaymentAttempt
+
+Responsibilities
+```
+Store Attempt Information
+Store Failure Reason
+Store Provider Response
+Store Timestamp
+```
+
+### RetryPolicy
+
+Responsibilities
+```
+Store Retry Configuration
+```
+No calculations.
+
+### RetryTask
+
+Responsibilities
+```
+Store Scheduled Retry Time
+Store Payment Reference
+```
+### PaymentProvider
+
+Responsibilities
+```
+Store Provider Metadata
+```
+Concrete provider implementations perform processing.
+
+
+## Classes
+
+### Payment
+#### Data Members
+
+```
+string paymentId;
+double amount;
+string currency;
+PaymentStatus status;
+int retryCount;
+string idempotencyKey;
+PaymentProvider* provider;
+long createdAt;
+long updatedAt;
+```
+#### Methods
+```
+getPaymentId()
+getAmount()
+getStatus()
+setStatus()
+incrementRetryCount()
+getRetryCount()
+setProvider()
+getProvider()
+updateTimestamp()
+```
+
+### PaymentAttempt
+#### Data Members
+```
+string attemptId;
+string paymentId;
+int attemptNumber;
+AttemptStatus status;
+string failureReason;
+string providerTransactionId;
+string responseCode;
+long latency;
+long attemptTime;
+```
+#### Methods
+```
+getAttemptNumber()
+getStatus()
+setStatus()
+setFailureReason()
+setResponse()
+setLatency()
+```
+### PaymentProvider
+#### Data Members
+```
+string providerId;
+string providerName;
+bool available;
+```
+#### Methods
+```
+getProviderId()
+getProviderName()
+isAvailable()
+```
+### RetryPolicy
+#### Data Members
+```
+int maxRetries;
+long baseDelay;
+long maxDelay;
+double multiplier;
+bool jitterEnabled;
+int jitterPercentage;
+```
+#### Methods
+```
+getMaxRetries()
+getBaseDelay()
+getMultiplier()
+isJitterEnabled()
+```
+### RetryTask
+
+#### Data Members
+```
+string paymentId;
+int retryNumber;
+long scheduledTime;
+```
+Methods
+```
+getPaymentId()
+getScheduledTime()
+getRetryNumber()
+```
+### Interface
+### IPaymentProvider
+
+Responsibilities
+
+Every provider must process payments in the same way.
+
+Methods
+```
+processPayment(Payment*)
+getProviderName()
+```
+Concrete Providers
+
+StripeProvider
+
+Methods
+```
+processPayment()
+getProviderName()
+```
+RazorpayProvider
+
+Methods
+```
+processPayment()
+getProviderName()
+```
+
+Service Classes
+
+### PaymentService
+
+Owns Payment.
+
+#### Data Members
+```
+PaymentRepository*
+```
+#### Methods
+```
+createPayment()
+getPayment()
+updateStatus()
+incrementRetryCount()
+savePayment()
+```
+
+### ProviderService
+
+Owns provider selection.
+
+#### Data Members
+```
+vector<IPaymentProvider*>
+```
+#### Methods
+```
+registerProvider()
+getProvider()
+processPayment()
+```
+### RetryManager
+
+Owns retry rules.
+
+#### Data Members
+```
+RetryPolicy
+RetryScheduler*
+```
+#### Methods
+```
+canRetry()
+isRetryableFailure()
+calculateDelay()
+applyJitter()
+scheduleRetry()
+```
+### RetryScheduler
+
+Owns scheduling.
+
+#### Data Members
+```
+RetryTaskRepository*
+```
+#### Methods
+```
+addRetryTask()
+executeDueRetries()
+removeRetryTask()
+```
+### HistoryService
+
+Owns retry history.
+
+#### Data Members
+```
+HistoryRepository*
+```
+#### Methods
+```
+recordAttempt()
+getHistory()
+```
+### PaymentProcessor
+
+This is the workflow coordinator.
+
+#### Data Members
+```
+PaymentService*
+ProviderService*
+RetryManager*
+HistoryService*
+```
+#### Methods
+```
+processPayment()
+handleSuccess()
+handleFailure()
+```
+This class contains the complete payment workflow.
+
+### PaymentRepository
+
+#### Data Members
+```
+unordered_map<string, Payment*>
+```
+#### Methods
+```
+save()
+find()
+exists()
+remove()
+```
+### HistoryRepository
+
+#### Data Members
+```
+unordered_map<string, vector<PaymentAttempt*>>
+```
+#### Methods
+```
+saveAttempt()
+getAttempts()
+```
+### RetryTaskRepository
+
+#### Data Members
+```
+priority_queue<RetryTask*>
+```
+A priority queue is ideal because retries should be processed in chronological order based on their scheduled execution time.
+
+#### Methods
+```
+addTask()
+getNextTask()
+removeTask()
+isEmpty()
+```
+
+
+## Compile
+
+```bash
+g++ -std=c++17 main.cpp $(find src -name "*.cpp") -Iinclude -o payment
+```
+
+## Run
+
+```bash
+./payment
+```
