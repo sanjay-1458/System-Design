@@ -59,6 +59,11 @@ This section contains commonly used software design patterns implemented with cl
     <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/State%20Design%20Pattern/README.md">README</a></td>
     <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/State%20Design%20Pattern/state.cpp">Code</a></td>
   </tr>
+  <tr>
+    <td>Chain of Responsibility Design Pattern</td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Chain%20of%20Responsibility%20Design%20Pattern/README.md">README</a></td>
+    <td><a href="./Low%20Level%20Design/System%20Design%20Patterns/Chain%20of%20Responsibility%20Design%20Pattern/code.cpp">Code</a></td>
+  </tr>
 </table>
 
 ---
