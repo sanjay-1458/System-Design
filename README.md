@@ -124,4 +124,19 @@ Topics covered include:
 - Microservices Architecture
 - System Tradeoffs
 
+--- 
 
+## System Design Problems
+
+This section contains high-level system designs, covering the main requirements, architecture, design decisions, trade-offs, and reasoning behind each system.
+
+<table>
+  <tr>
+    <th>System</th>
+    <th>README</th>
+  </tr>
+  <tr>
+    <td>URL Shortener</td>
+    <td><a href="./High%20Level%20Design/URL%20Shortner/README.md">README</a></td>
+  </tr>
+</table>
