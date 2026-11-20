@@ -106,3 +106,82 @@ int main() {
     
     return 0;
 }
+
+// Delegation from parent
+#include<bits/stdc++.h>
+using namespace std;
+
+class Handler {
+
+protected:
+
+    Handler *next = nullptr;
+
+public:
+
+    void setNext(Handler *nextHandler) {
+
+        next = nextHandler;
+    }
+
+    virtual void handle(int request) {
+
+        if(next != nullptr) {
+
+            next -> handle(request);
+        }
+        else {
+
+            cout << "No handler found \n";
+        }
+    }
+
+    ~Handler() {}
+};
+
+class HandlerA : public Handler{
+
+public:
+
+    void handle(int request) override {
+
+        if(request == 1) {
+
+            cout << "Handled by A \n";
+        }
+        else {
+
+            Handler::handle(request);
+        }
+    }
+};
+
+class HandlerB : public Handler{
+
+public:
+
+    void handle(int request) override {
+
+        if(request == 2) {
+
+            cout << "Handled by B \n";
+        }
+        else {
+
+            Handler::handle(request);
+        }
+    }
+};
+
+
+int main() {
+
+    HandlerA handlerA;
+    HandlerB handlerB;
+
+    handlerA.setNext(&handlerB);
+
+    handlerA.handle(3);
+
+    return 0;
+}
